@@ -6,8 +6,11 @@ Homebrew tap for the AX Stats build maintained in [AXIOMZK/stats](https://github
 
 ```bash
 brew tap AXIOMZK/ax-stats
+brew trust AXIOMZK/ax-stats
 brew install ax-stats
 ```
+
+Recent Homebrew versions require an explicit one-time trust for third-party taps. Older Homebrew versions may not need the `brew trust` line.
 
 The cask installs `Stats.app` into `/Applications`.
 

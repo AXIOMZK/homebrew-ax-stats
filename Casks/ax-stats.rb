@@ -7,7 +7,7 @@ cask "ax-stats" do
   desc "macOS system monitor with combined-module hover details"
   homepage "https://github.com/AXIOMZK/stats"
 
-  depends_on macos: ">= :monterey"
+  depends_on macos: :monterey
 
   app "Stats.app"
 
