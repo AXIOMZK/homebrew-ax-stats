@@ -1,0 +1,72 @@
+name: update cask
+
+on:
+  repository_dispatch:
+    types: [stats-release]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Stats release tag, for example v3.0.18"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event.client_payload.tag || inputs.tag }}
+
+    steps:
+      - name: Check out the tap
+        uses: actions/checkout@v4
+
+      - name: Update the cask version and checksum
+        run: |
+          set -euo pipefail
+
+          version="${RELEASE_TAG#v}"
+          archive="/tmp/Stats-${version}.zip"
+          url="https://github.com/AXIOMZK/stats/releases/download/v${version}/Stats-${version}.zip"
+
+          curl --fail --location --retry 3 --output "$archive" "$url"
+          sha256="$(sha256sum "$archive" | awk '{print $1}')"
+
+          VERSION="$version" SHA256="$sha256" python3 - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          path = Path("Casks/ax-stats.rb")
+          text = path.read_text()
+          text, version_count = re.subn(
+              r'(?m)^(\s*version\s+")[^"]+("\s*)$',
+              rf'\g<1>{os.environ["VERSION"]}\g<2>',
+              text,
+              count=1,
+          )
+          text, sha_count = re.subn(
+              r'(?m)^(\s*sha256\s+")[^"]+("\s*)$',
+              rf'\g<1>{os.environ["SHA256"]}\g<2>',
+              text,
+              count=1,
+          )
+          if version_count != 1 or sha_count != 1:
+              raise SystemExit("cask version/sha256 fields were not updated")
+          path.write_text(text)
+          PY
+
+      - name: Open a cask update pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automation/update-ax-stats-${{ env.RELEASE_TAG }}
+          delete-branch: true
+          title: "chore: update ax-stats cask to ${{ env.RELEASE_TAG }}"
+          commit-message: "chore: update ax-stats cask to ${{ env.RELEASE_TAG }}"
+          body: |
+            Update the AX Stats cask to the matching release asset.
+
+            Release: https://github.com/AXIOMZK/stats/releases/tag/${{ env.RELEASE_TAG }}
