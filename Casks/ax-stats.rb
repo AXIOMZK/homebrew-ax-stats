@@ -1,6 +1,6 @@
 cask "ax-stats" do
-  version "3.0.17.1"
-  sha256 "00152f835d4b272c1b0d84be39c51ccfc16a5ca71acbad185d20f729a44b66de"
+  version "3.0.18"
+  sha256 "ff356f8818939e326f2ae4ad32908ff0c1d94707146759ca17bc40e5c60b24eb"
 
   url "https://github.com/AXIOMZK/stats/releases/download/v#{version}/Stats-#{version}.zip"
   name "AX Stats"
