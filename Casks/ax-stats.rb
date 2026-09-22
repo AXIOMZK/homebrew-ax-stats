@@ -1,6 +1,6 @@
 cask "ax-stats" do
-  version "3.0.18"
-  sha256 "ff356f8818939e326f2ae4ad32908ff0c1d94707146759ca17bc40e5c60b24eb"
+  version "3.0.19"
+  sha256 "e289423d09a8541acf5c6825f83b1057f1b60112f50af2915fe17977827d70c9"
 
   url "https://github.com/AXIOMZK/stats/releases/download/v#{version}/Stats-#{version}.zip"
   name "AX Stats"
@@ -12,7 +12,7 @@ cask "ax-stats" do
   app "Stats.app"
 
   caveats <<~EOS
-    This is a development build of AX Stats. It is ad-hoc signed and not notarized.
+    This is a development build of AX Stats. It is self-signed and not notarized.
     If macOS blocks the first launch, approve Stats in System Settings > Privacy & Security.
   EOS
 end
